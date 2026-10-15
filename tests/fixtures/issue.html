@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Hand-written approximation of the React issue composer on github.com.
+  It mirrors only the element structure and attributes the extension relies on;
+  it contains no real issue content.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fix flaky upload test · Issue #1 · acme/widgets</title>
+    <style>
+      body { font-family: sans-serif; margin: 24px; }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+      textarea { width: 100%; min-height: 120px; }
+      .Footer-module__childrenStyling__fx06 { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 data-testid="issue-title">Fix flaky upload test</h1>
+      <div id="timeline" data-testid="timeline"></div>
+      <div id="react-issue-comment-composer">
+        <div data-testid="comment-composer">
+          <h2 id="comment-composer-heading" class="sr-only">Add a comment</h2>
+          <div class="IssueCommentComposer-module__commentBoxWrapper__fx01">
+            <div class="CommentBox-module__commentBoxContainer__fx02">
+              <slash-command-expander>
+                <fieldset aria-disabled="false">
+                  <div class="MarkdownEditor-module__container__fx03">
+                    <div>
+                      <div class="MarkdownEditor-module__writeWrapper__fx04">
+                        <div class="MarkdownInput-module__inputWrapper__fx05">
+                          <span>
+                            <textarea
+                              aria-labelledby="comment-composer-heading"
+                              placeholder="Use Markdown to format your comment"
+                            ></textarea>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div data-testid="markdown-editor-footer">
+                      <div class="Footer-module__childrenStyling__fx06">
+                        <div>
+                          <button type="button" data-variant="default">Close issue</button>
+                          <button type="button" data-variant="default" aria-label="Other actions"></button>
+                        </div>
+                        <button type="button" data-variant="primary" aria-disabled="true">
+                          <span>Comment</span>
+                        </button>
+                        <span data-testid="save-button-tooltip" role="tooltip" aria-hidden="true">Draft required</span>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </slash-command-expander>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      // Mimics GitHub: the Comment button follows the textarea through input events,
+      // and posting appends the comment to the timeline and clears the textarea.
+      const textarea = document.querySelector('textarea');
+      const commentButton = document.querySelector('[data-variant="primary"]');
+      const update = () => commentButton.setAttribute('aria-disabled', String(textarea.value.trim() === ''));
+      textarea.addEventListener('input', update);
+      commentButton.addEventListener('click', () => {
+        if (commentButton.getAttribute('aria-disabled') === 'true') return;
+        const posted = document.createElement('p');
+        posted.className = 'posted-comment';
+        posted.textContent = textarea.value;
+        document.querySelector('#timeline').append(posted);
+        textarea.value = '';
+        update();
+      });
+    </script>
+  </body>
+</html>

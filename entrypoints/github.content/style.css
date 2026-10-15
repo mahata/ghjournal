@@ -1,0 +1,56 @@
+.ghj-actions {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--base-size-8, 8px);
+  vertical-align: middle;
+}
+
+.ghj-actions--spaced {
+  margin-inline-end: var(--base-size-8, 8px);
+}
+
+.ghj-actions .ghj-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--control-medium-size, 32px);
+  margin: 0;
+  padding: 0 var(--control-medium-paddingInline-normal, 12px);
+  font-family: inherit;
+  font-size: var(--text-body-size-medium, 14px);
+  font-weight: var(--base-text-weight-medium, 500);
+  line-height: 20px;
+  white-space: nowrap;
+  color: var(--button-default-fgColor-rest, #25292e);
+  background-color: var(--button-default-bgColor-rest, #f6f8fa);
+  border: var(--borderWidth-thin, 1px) solid var(--button-default-borderColor-rest, #d1d9e0);
+  border-radius: var(--borderRadius-medium, 6px);
+  box-shadow: var(--button-default-shadow-resting, 0 1px 0 0 #1f23280a);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 80ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.ghj-actions .ghj-button:hover:not(:disabled) {
+  background-color: var(--button-default-bgColor-hover, #eff2f5);
+  border-color: var(--button-default-borderColor-hover, #d1d9e0);
+}
+
+.ghj-actions .ghj-button:active:not(:disabled) {
+  background-color: var(--button-default-bgColor-active, #e6eaef);
+}
+
+.ghj-actions .ghj-button:focus-visible {
+  outline: 2px solid var(--focus-outlineColor, #0969da);
+  outline-offset: -2px;
+}
+
+.ghj-actions .ghj-button:disabled {
+  color: var(--control-fgColor-disabled, #818b98);
+  background-color: var(--button-default-bgColor-disabled, #eff2f5);
+  border-color: var(--button-default-borderColor-disabled, #818b981a);
+  box-shadow: none;
+  cursor: not-allowed;
+}
