@@ -1,4 +1,4 @@
-import { formatTimestamp } from './format';
+import { formatCompactTimestamp, formatTimestamp } from './format';
 import { parseConversationPath } from './route';
 import { listSavedComments, removeSavedComment, type SavedCommentEntry } from './storage';
 
@@ -62,12 +62,15 @@ export async function renderPopup(container: HTMLElement, options: PopupOptions 
     link.target = '_blank';
     link.rel = 'noreferrer';
 
-    const time = element('time', 'entry-time', formatTimestamp(entry.savedAt));
+    const time = element('time', 'entry-time', formatCompactTimestamp(entry.savedAt));
     time.dateTime = new Date(entry.savedAt).toISOString();
+    time.title = formatTimestamp(entry.savedAt);
+    const referenceLabel = element('span', 'entry-ref', reference);
+    referenceLabel.title = reference;
     const meta = element('span', 'entry-meta');
     meta.append(
       element('span', 'entry-kind', entry.kind === 'issue' ? 'Issue' : 'PR'),
-      element('span', 'entry-ref', reference),
+      referenceLabel,
       time,
     );
 

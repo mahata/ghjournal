@@ -118,19 +118,31 @@ body {
 
 .entry-meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   font-size: 12px;
   color: var(--fg-muted);
+  white-space: nowrap;
 }
 
 .entry-kind {
+  flex: none;
   padding: 0 6px;
   font-weight: 500;
   color: var(--badge-fg);
   background: var(--badge-bg);
   border-radius: 999px;
+}
+
+.entry-ref {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry-time {
+  flex: none;
 }
 
 .entry-preview {
@@ -145,6 +157,7 @@ body {
 
 .entry-delete {
   flex: none;
+  min-width: 72px;
   padding: 2px 10px;
   font: inherit;
   font-size: 12px;

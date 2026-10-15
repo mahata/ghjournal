@@ -1,8 +1,17 @@
-const timestampFormat = new Intl.DateTimeFormat(undefined, {
+const fullFormat = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
   timeStyle: 'short',
 });
 
+const compactFormat = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'short',
+  timeStyle: 'short',
+});
+
 export function formatTimestamp(epochMs: number): string {
-  return timestampFormat.format(epochMs);
+  return fullFormat.format(epochMs);
+}
+
+export function formatCompactTimestamp(epochMs: number): string {
+  return compactFormat.format(epochMs);
 }
