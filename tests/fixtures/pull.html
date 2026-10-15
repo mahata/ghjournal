@@ -1,0 +1,61 @@
+<!doctype html>
+<!--
+  Hand-written approximation of the server-rendered comment form on the
+  "Conversation" tab of a pull request on github.com. It mirrors only the element
+  structure and attributes the extension relies on; it contains no real PR content.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Add retry to uploader by octocat · Pull Request #2 · acme/widgets</title>
+    <style>
+      body { font-family: sans-serif; margin: 24px; }
+      textarea { width: 100%; min-height: 120px; }
+      #partial-new-comment-form-actions { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1><span class="js-issue-title markdown-title">Add retry to uploader</span></h1>
+      <div class="js-discussion">
+        <div class="timeline-comment-wrapper">
+          <form class="js-comment-update" action="/acme/widgets/pull/2/comment/edit" method="post">
+            <textarea name="pull_request[body]" class="js-comment-field">Existing description</textarea>
+            <button type="submit" class="btn-primary btn">Update comment</button>
+          </form>
+        </div>
+        <div class="timeline-comment-wrapper timeline-new-comment" id="issuecomment-new">
+          <form class="js-new-comment-form" action="/acme/widgets/pull/2/comment" method="post" accept-charset="UTF-8">
+            <file-attachment class="js-upload-markdown-image" input="fc-new_comment_field">
+              <textarea
+                name="comment[body]"
+                id="new_comment_field"
+                class="js-comment-field"
+                placeholder="Leave a comment"
+                aria-label="Comment body"
+              ></textarea>
+            </file-attachment>
+            <div id="partial-new-comment-form-actions">
+              <button type="submit" name="comment_and_close" value="1" class="btn js-comment-and-button">
+                Close pull request
+              </button>
+              <button type="submit" class="btn-primary btn" data-disable-with="" data-disable-invalid="">
+                Comment
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script>
+      // Records submissions instead of navigating, so tests can assert that the
+      // extension's buttons never submit the form.
+      for (const form of document.querySelectorAll('form')) {
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          document.body.dataset.submittedForms = String(Number(document.body.dataset.submittedForms ?? 0) + 1);
+        });
+      }
+    </script>
+  </body>
+</html>
