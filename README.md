@@ -52,11 +52,12 @@ The only permission it requests is `storage`, and its content script runs only o
 | `pnpm dev` | Open Chrome with a separate profile that has the extension loaded, and rebuild on changes. Sign in to GitHub in that window to see the comment box. |
 | `pnpm build` | Build the extension into `.output/chrome-mv3`. |
 | `pnpm zip` | Build and package the extension as a zip file. |
+| `pnpm icons` | Render `assets/icon.svg` into the PNG icons in `public/icon` with Playwright's Chromium. Run it after editing the SVG, and commit both. |
 | `pnpm compile` | Type-check the project. |
 | `pnpm test` | Run the unit tests (Vitest with jsdom). |
 | `pnpm test:e2e` | Build the extension and run the end-to-end tests (Playwright). |
 
-Before running the end-to-end tests for the first time, install Playwright's Chromium:
+Before running the end-to-end tests or `pnpm icons` for the first time, install Playwright's Chromium:
 
 ```sh
 pnpm exec playwright install chromium
@@ -79,6 +80,8 @@ Major npm updates and all `wxt` updates get their own pull requests, because `wx
 ### Project layout
 
 ```
+assets/
+  icon.svg         Source of the extension icon
 entrypoints/
   github.content/  Content script that adds the buttons on github.com
   popup/           Toolbar popup that lists and deletes saved comments
@@ -88,6 +91,10 @@ lib/
   route.ts         Parses issue and pull request URLs into storage keys
   storage.ts       Reads and writes saved comments
   text-field.ts    Writes into the comment box in an undoable way
+public/
+  icon/            PNG icons rendered from assets/icon.svg by `pnpm icons`
+scripts/
+  render-icons.ts  Renders the PNG icons
 tests/
   fixtures/        Simplified copies of GitHub's comment box markup
   unit/            Vitest tests
