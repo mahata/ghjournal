@@ -70,6 +70,12 @@ The [CI workflow](.github/workflows/ci.yml) runs `pnpm compile`, `pnpm test`, an
 When the end-to-end tests fail, it uploads their traces as the `playwright-test-results` artifact.
 Open a trace with `pnpm exec playwright show-trace path/to/trace.zip`.
 
+### Dependency updates
+
+[Dependabot](.github/dependabot.yml) checks npm packages and GitHub Actions every week and opens pull requests to update them to versions that have been published for at least 7 days.
+Minor and patch npm updates are grouped into one pull request, and GitHub Actions updates into another.
+Major npm updates and all `wxt` updates get their own pull requests, because `wxt` is still 0.x and its minor releases may contain breaking changes.
+
 ### Project layout
 
 ```
