@@ -64,6 +64,12 @@ pnpm exec playwright install chromium
 
 The end-to-end tests load the built extension into Chromium and answer requests to `https://github.com/...` with the fixture pages in `tests/fixtures`, so they need neither network access nor a GitHub login.
 
+### Continuous integration
+
+The [CI workflow](.github/workflows/ci.yml) runs `pnpm compile`, `pnpm test`, and `pnpm test:e2e` on GitHub Actions for every pull request and every push to `main`.
+When the end-to-end tests fail, it uploads their traces as the `playwright-test-results` artifact.
+Open a trace with `pnpm exec playwright show-trace path/to/trace.zip`.
+
 ### Project layout
 
 ```
