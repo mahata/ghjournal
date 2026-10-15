@@ -46,6 +46,16 @@ function settle(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 50));
 }
 
+/** Holds the next storage read until the returned function is called, like a slow disk. */
+function delayNextStorageRead(): (items: Record<string, unknown>) => void {
+  let release!: (items: Record<string, unknown>) => void;
+  const pending = new Promise<Record<string, unknown>>((resolve) => {
+    release = resolve;
+  });
+  vi.spyOn(browser.storage.local, 'get').mockImplementationOnce(() => pending as never);
+  return release;
+}
+
 describe('startCommentSaver', () => {
   let controller: AbortController;
   let confirm: ReturnType<typeof vi.fn<(message: string) => boolean>>;
@@ -231,6 +241,77 @@ describe('startCommentSaver', () => {
 
       await vi.waitFor(() => expect(textarea().value).toBe('Saved draft'));
       expect(confirm).not.toHaveBeenCalled();
+    });
+
+    it('saves the title of the conversation where Save was clicked if GitHub navigates meanwhile', async () => {
+      start();
+      await typeDraft('Draft for issue 1');
+      await settle();
+      const release = delayNextStorageRead();
+
+      buttons().save!.click();
+      history.pushState(null, '', '/acme/widgets/issues/3');
+      document.title = 'Another issue · Issue #3 · acme/widgets';
+      release({});
+
+      await vi.waitFor(async () =>
+        expect(await getSavedComment(ISSUE_KEY)).toMatchObject({
+          body: 'Draft for issue 1',
+          title: 'Fix flaky upload test',
+          url: 'https://github.com/acme/widgets/issues/1',
+        }),
+      );
+      expect(await getSavedComment('comment:acme/widgets#3')).toBeNull();
+    });
+
+    it('does not restore a draft into a conversation reached while storage is being read', async () => {
+      await setSavedComment(ISSUE_KEY, savedComment());
+      start();
+      await vi.waitFor(() => expect(buttons().load?.disabled).toBe(false));
+      await settle();
+      const release = delayNextStorageRead();
+
+      buttons().load!.click();
+      history.pushState(null, '', '/acme/widgets/issues/3');
+      release({ [ISSUE_KEY]: savedComment() });
+      await settle();
+
+      expect(textarea().value).toBe('');
+      expect(confirm).not.toHaveBeenCalled();
+    });
+
+    it('restores into the comment box that GitHub re-rendered while storage was being read', async () => {
+      await setSavedComment(ISSUE_KEY, savedComment());
+      const composerRoot = document.querySelector('#react-issue-comment-composer')!;
+      const pristineComposer = composerRoot.innerHTML;
+      start();
+      await vi.waitFor(() => expect(buttons().load?.disabled).toBe(false));
+      await settle();
+      const staleTextarea = textarea();
+      const release = delayNextStorageRead();
+
+      buttons().load!.click();
+      composerRoot.innerHTML = pristineComposer;
+      release({ [ISSUE_KEY]: savedComment() });
+
+      await vi.waitFor(() => expect(textarea().value).toBe('Saved draft'));
+      expect(textarea()).not.toBe(staleTextarea);
+      expect(staleTextarea.value).toBe('');
+    });
+
+    it('stops loading when the saver is stopped while storage is being read', async () => {
+      await setSavedComment(ISSUE_KEY, savedComment());
+      start();
+      await vi.waitFor(() => expect(buttons().load?.disabled).toBe(false));
+      await settle();
+      const release = delayNextStorageRead();
+
+      buttons().load!.click();
+      controller.abort();
+      release({ [ISSUE_KEY]: savedComment() });
+      await settle();
+
+      expect(textarea().value).toBe('');
     });
 
     it('follows saves and deletions made in other tabs or the popup', async () => {

@@ -162,6 +162,8 @@ export function startCommentSaver(options: CommentSaverOptions = {}): CommentSav
     const { ref, composer } = target;
     const body = composer.textarea.value;
     if (body.trim() === '') return;
+    // Read the title now: GitHub may navigate to another conversation while storage is busy.
+    const title = extractConversationTitle(doc.title, ref);
 
     busy = true;
     try {
@@ -173,13 +175,7 @@ export function startCommentSaver(options: CommentSaverOptions = {}): CommentSav
       ) {
         return;
       }
-      const comment: SavedComment = {
-        body,
-        savedAt: now(),
-        url: ref.url,
-        title: extractConversationTitle(doc.title, ref),
-        kind: ref.kind,
-      };
+      const comment: SavedComment = { body, savedAt: now(), url: ref.url, title, kind: ref.kind };
       await setSavedComment(ref.key, comment);
       if (current?.key === ref.key) saved = comment;
       showFeedback(button, 'Saved ✓');
@@ -202,8 +198,12 @@ export function startCommentSaver(options: CommentSaverOptions = {}): CommentSav
       if (current?.key === ref.key) saved = comment;
       if (!comment) return;
 
-      // GitHub may have re-rendered the composer while storage was being read.
-      const textarea = findComposer(doc)?.textarea ?? target.composer.textarea;
+      // While storage was being read, GitHub may have navigated elsewhere or re-rendered
+      // the composer, and the saver may have been stopped. Only write into the live
+      // composer of the conversation the draft belongs to.
+      const latest = resolveTarget();
+      if (!latest || latest.ref.key !== ref.key) return;
+      const { textarea } = latest.composer;
       const text = textarea.value;
       if (text !== comment.body) {
         if (
