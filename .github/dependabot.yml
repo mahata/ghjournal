@@ -1,0 +1,26 @@
+version: 2
+
+updates:
+  # The npm ecosystem also covers pnpm.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        # wxt is still 0.x, so its minor releases may contain breaking changes.
+        exclude-patterns: [wxt]
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ["*"]
