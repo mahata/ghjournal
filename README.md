@@ -36,6 +36,7 @@ The build also works in other Chromium-based browsers such as Edge and Brave.
 Saved comments are kept in `chrome.storage.local` on your device.
 They are not synced to other devices and are never sent anywhere; the extension makes no network requests.
 The only permission it requests is `storage`, and its content script runs only on `https://github.com/*`.
+See the [privacy policy](PRIVACY.md) for details.
 
 ## Scope and limitations
 
@@ -77,11 +78,17 @@ Open a trace with `pnpm exec playwright show-trace path/to/trace.zip`.
 Minor and patch npm updates are grouped into one pull request, and GitHub Actions updates into another.
 Major npm updates and all `wxt` updates get their own pull requests, because `wxt` is still 0.x and its minor releases may contain breaking changes.
 
+### Chrome Web Store
+
+[docs/store-listing.md](docs/store-listing.md) has the text to enter in the Chrome Web Store Developer Dashboard and the steps to publish an update.
+
 ### Project layout
 
 ```
 assets/
   icon.svg         Source of the extension icon
+docs/
+  store-listing.md Text for the Chrome Web Store Developer Dashboard
 entrypoints/
   github.content/  Content script that adds the buttons on github.com
   popup/           Toolbar popup that lists and deletes saved comments
